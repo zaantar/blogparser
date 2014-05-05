@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author zaantar
- *
- */
-package blogparser;
