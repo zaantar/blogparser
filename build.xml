@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Blogparser" basedir=".">
+
+	<property name="jar_location" value="./jar"/>
+	<property name="bin_location" value="./bin"/>
+	<property name="lib_location" value="./lib"/>
+	<property name="source" value="1.7"/>
+	<property name="target" value="1.7"/>
+	<property name="debuglevel" value="source,lines,vars"/>
+
+	<!--
+	<property name="ECLIPSE_HOME" value="/usr/lib/eclipse"/>
+	<path id="Groovy Libraries.libraryclasspath">
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/groovy-all-2.1.5.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/servlet-api-2.4.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/ivy-2.2.0.jar"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/bsf-2.4.0.jar"/>
+    </path>
+    <path id="Groovy DSL Support.libraryclasspath">
+        <pathelement location="../../../.groovy/greclipse/global_dsld_support"/>
+        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/plugin_dsld_support/"/>
+    </path>
+    -->
+
+	<path id="blogparser.classpath">
+        <pathelement location="bin"/>
+        <path refid="Groovy Libraries.libraryclasspath"/>
+        <path refid="Groovy DSL Support.libraryclasspath"/>
+        <pathelement location="jtidy-r938.jar"/>
+        <pathelement location="forms-1.3.0.jar"/>
+    </path>
+
+    <target depends="init" name="create_run_jar">
+        <jar destfile="${bin_location}/blogparser.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="blogparser.GroovyLauncher"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ groovy-all-2.1.5.jar servlet-api-2.4.jar ivy-2.2.0.jar bsf-2.4.0.jar jtidy-r938.jar forms-1.3.0.jar"/>
+            </manifest>
+            <zipfileset src="${lib_location}/jar-in-jar-loader.zip"/>
+            <fileset dir="${bin_location}"/>
+            <zipfileset dir="${lib_location}" includes="groovy-all-2.1.5.jar"/>
+            <zipfileset dir="${lib_location}" includes="servlet-api-2.4.jar"/>
+            <zipfileset dir="${lib_location}" includes="ivy-2.2.0.jar"/>
+            <zipfileset dir="${lib_location}" includes="bsf-2.4.0.jar"/>
+            <zipfileset dir="${lib_location}" includes="jtidy-r938.jar"/>
+            <zipfileset dir="${lib_location}" includes="forms-1.3.0.jar"/>
+        </jar>
+    </target>
+
+    <target name="clean">
+        <delete dir="bin"/>
+    </target>
+
+    <target depends="clean" name="cleanall"/>
+
+    <target name="init">
+        <mkdir dir="bin"/>
+        <copy includeemptydirs="false" todir="bin">
+            <fileset dir="src">
+                <exclude name="**/*.launch"/>
+                <exclude name="**/*.xtend"/>
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+	<!--
+    <target depends="init" name="build">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
+            <src path="src"/>
+            <classpath refid="blogparser.classpath"/>
+        </javac>
+    </target>
+    -->
+</project>
