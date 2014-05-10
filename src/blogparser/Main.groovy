@@ -11,7 +11,7 @@ class Main {
         println ""
         
         /* decide whether to run in commandline or window mode */
-		def isWindowMode = false;
+		def isWindowMode = true;
 		
 		isWindowMode = (args.size() != 2);
 		

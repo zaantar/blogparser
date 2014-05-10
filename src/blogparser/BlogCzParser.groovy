@@ -83,6 +83,14 @@ class BlogCzParser extends Parser {
 		// next parsing step
 		logger.globalStep()
 
+		if(failedPages.size() > 0) {
+			log "some pages couldn't be downloaded:"
+			logdown()
+			for(def failedPageLink : failedPages) {
+				log failedPageLink
+			}
+			logup()
+		}
 		
 		logup()
 		log "BlogCzParser operation finished"
@@ -128,7 +136,10 @@ class BlogCzParser extends Parser {
 		def posts = []
 		def postId = 0
 		for(def postLink : postLinks) {
-			posts.add parsePost(postLink, ++postId)
+			def parsedPost = parsePost(postLink, ++postId)
+			if(parsedPost != null) {
+				posts.add parsedPost
+			}
 			logger.step();
 		}
 		
@@ -249,34 +260,44 @@ class BlogCzParser extends Parser {
 		log "parsing post from $postLink"
 		logdown()
 
-		def page = reader.read postLink
-
-		def post = new Expando()
-
-		// trivially figure some post metadata
-		post.id = postId
-		post.author = blogIdentifier
-		post.url = url postLink
-		post.guid = post.url
-		post.slug = post.url.substring(1)
-
-		// read from page
-		post.title = reader.xpathString(page, BlogCzXpath.postTitle)
-		log "post title is $post.title"
-
-		post.date = parseDate reader.xpathString(page, BlogCzXpath.postDate)
-		log "post date is $post.date"
-		
-		post.category = reader.xpathString(page, BlogCzXpath.postCategory)
-		log "post category is '$post.category'"
-		
-		post.content = parsePostContent reader.xpathNodeAsString(page, BlogCzXpath.postContent)
-		log "post content is '$post.content'", 0
-		
-		post.comments = parseComments page
-				
-		logup()
-		post
+		try {
+			
+			def page = reader.read postLink
+	
+			def post = new Expando()
+	
+			// trivially figure some post metadata
+			post.id = postId
+			post.author = blogIdentifier
+			post.url = url postLink
+			post.guid = post.url
+			post.slug = post.url.substring(1)
+	
+			// read from page
+			post.title = reader.xpathString(page, BlogCzXpath.postTitle)
+			log "post title is $post.title"
+	
+			post.date = parseDate reader.xpathString(page, BlogCzXpath.postDate)
+			log "post date is $post.date"
+			
+			post.category = reader.xpathString(page, BlogCzXpath.postCategory)
+			log "post category is '$post.category'"
+			
+			post.content = parsePostContent reader.xpathNodeAsString(page, BlogCzXpath.postContent)
+			log "post content is '$post.content'", 0
+			
+			post.comments = parseComments page
+					
+			logup()
+			post
+			
+		}
+		catch(BlogparserException e) {
+			log "a blogparser exception occured: " + e
+			log "post links from $postLink probably couldn't have been retrieved"
+			failedPages.add(postLink)
+			return null
+		}
 	}
 
 
