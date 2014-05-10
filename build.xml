@@ -49,12 +49,6 @@
         </jar>
     </target>
 
-    <target name="clean">
-        <delete dir="bin"/>
-    </target>
-
-    <target depends="clean" name="cleanall"/>
-
     <target name="init">
         <mkdir dir="bin"/>
         <copy includeemptydirs="false" todir="bin">
