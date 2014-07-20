@@ -1,7 +1,11 @@
 package blogparser;
 
-import java.io.*;
-import java.util.*;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 
 
 class ReplacingInputStream extends FilterInputStream {

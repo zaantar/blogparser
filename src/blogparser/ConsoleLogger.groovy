@@ -7,10 +7,7 @@ class ConsoleLogger extends Logger {
 		println '   '.multiply(nestingLevel) + msg.toString()
 	}
 
-	
-	@Override
 	public log(String msg) { log(msg, 0) }
-
 	
 	@Override
 	public globalStep() { }

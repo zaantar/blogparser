@@ -23,8 +23,8 @@ class TextAreaLogger extends Logger {
 	}
 	
 	
-	@Override
-	public log(String msg) { log(msg, -1) }
+	//@Override
+	public log(String msg) { log(msg, -1); }
 
 	@Override
 	public setGlobalStepCount(int value) {

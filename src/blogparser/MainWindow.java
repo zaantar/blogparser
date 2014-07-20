@@ -176,7 +176,7 @@ public class MainWindow {
 						int verbosity = chckbxExtendedLogging.isSelected() ? 0 : 1;
 						logger.setVerbosity(verbosity);
 						
-						Main.parse(blogNameField.getText(), outputPathField.getText(), logger);
+						blogparser.Main.parse(blogNameField.getText(), outputPathField.getText(), logger);
 
 						chckbxExtendedLogging.setEnabled(true);
 						outputPathField.setEnabled(true);

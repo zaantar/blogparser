@@ -1,5 +1,6 @@
 package blogparser
 
+
 class Main {
 
     static main(args) {
@@ -40,7 +41,7 @@ class Main {
     }
 	
 	
-	public static parse(String blogName, String outputPath, Logger logger) {
+	public static void parse(String blogName, String outputPath, Logger logger) {
 		
 		logger.resetGlobalSteps();
 		logger.setGlobalStepCount(6)
