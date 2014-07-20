@@ -1,37 +1,38 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project default="create_run_jar" name="Blogparser" basedir=".">
 
-	<property name="jar_location" value="./jar"/>
+	<property name="src_location" value="./src"/>
 	<property name="bin_location" value="./bin"/>
 	<property name="lib_location" value="./lib"/>
-	<property name="source" value="1.7"/>
-	<property name="target" value="1.7"/>
+	<property name="dist_location" value="./dist"/>
+	<property name="source_version" value="1.7"/>
+	<property name="target_version" value="1.7"/>
 	<property name="debuglevel" value="source,lines,vars"/>
-
-	<!--
-	<property name="ECLIPSE_HOME" value="/usr/lib/eclipse"/>
+		
 	<path id="Groovy Libraries.libraryclasspath">
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/groovy-all-2.1.5.jar"/>
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/servlet-api-2.4.jar"/>
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/ivy-2.2.0.jar"/>
-        <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/lib/bsf-2.4.0.jar"/>
+        <pathelement location="${lib_location}/groovy-all-2.1.5.jar"/>
+        <pathelement location="${lib_location}/servlet-api-2.4.jar"/>
+        <pathelement location="${lib_location}/ivy-2.2.0.jar"/>
+        <pathelement location="${lib_location}/bsf-2.4.0.jar"/>
     </path>
+	
     <path id="Groovy DSL Support.libraryclasspath">
-        <pathelement location="../../../.groovy/greclipse/global_dsld_support"/>
         <pathelement location="${ECLIPSE_HOME}/plugins/org.codehaus.groovy_2.1.5.xx-20130703-1600-e43-RELEASE/plugin_dsld_support/"/>
     </path>
-    -->
-
+	
 	<path id="blogparser.classpath">
-        <pathelement location="bin"/>
+        <pathelement location="${lib_location}"/>
         <path refid="Groovy Libraries.libraryclasspath"/>
         <path refid="Groovy DSL Support.libraryclasspath"/>
-        <pathelement location="jtidy-r938.jar"/>
-        <pathelement location="forms-1.3.0.jar"/>
+        <pathelement location="${lib_location}/jtidy-r938.jar"/>
+        <pathelement location="${lib_location}/forms-1.3.0.jar"/>
     </path>
+	
+	<!-- groovyc task for pre-compiling groovy scripts -->
+	<taskdef name="groovyc" classname="org.codehaus.groovy.ant.Groovyc" classpathref="blogparser.classpath"/>
 
-    <target depends="init" name="create_run_jar">
-        <jar destfile="${bin_location}/blogparser.jar">
+    <target depends="init,build" name="create_run_jar">
+        <jar destfile="${dist_location}/blogparser.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="blogparser.GroovyLauncher"/>
@@ -50,23 +51,36 @@
     </target>
 
     <target name="init">
-        <mkdir dir="bin"/>
+        <mkdir dir="${bin_location}"/>
+    	<mkdir dir="${dist_location}"/>
         <copy includeemptydirs="false" todir="bin">
             <fileset dir="src">
                 <exclude name="**/*.launch"/>
                 <exclude name="**/*.xtend"/>
-                <exclude name="**/*.java"/>
+                <!--exclude name="**/*.java"/-->
             </fileset>
         </copy>
     </target>
-
-	<!--
-    <target depends="init" name="build">
-        <echo message="${ant.project.name}: ${ant.file}"/>
-        <javac debug="true" debuglevel="${debuglevel}" destdir="bin" includeantruntime="false" source="${source}" target="${target}">
-            <src path="src"/>
-            <classpath refid="blogparser.classpath"/>
-        </javac>
+	
+	<target name="clean">
+        <delete dir="${bin_location}"/>
+		<delete dir="${dist_location}"/>
     </target>
-    -->
+	
+	<target depends="clean" name="cleanall"/>
+	
+	<target depends="init" name="build">
+        <echo message="${ant.project.name}: ${ant.file}"/>
+		<groovyc srcdir="${src_location}" destdir="${bin_location}" verbose="true" includeJavaRuntime="yes">
+			<classpath refid="blogparser.classpath"/>
+			<classpath>
+			    <pathelement path="${src_location}"/>
+				<pathelement path="${bin_location}"/>
+			    <path refid="blogparser.classpath"/>
+			</classpath>
+			<javac source="${source_version}" target="${target_version}" debug="on" debuglevel="${debuglevel}" />
+		</groovyc>
+		<!--javac srcdir="${bin_location}" destdir="${bin_location}" source="${source_version}" target="${target_version}" debug="on" debuglevel="${debuglevel}" /-->
+    </target>
+
 </project>
